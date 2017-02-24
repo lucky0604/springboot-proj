@@ -22,7 +22,7 @@ public class User implements Serializable {
 
     private String password;
 
-    private String salt;  // 加密密码
+    // private String salt;  // 加密密码
 
     /**
      * 用户状态
@@ -69,6 +69,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    /*
     public String getSalt() {
         return salt;
     }
@@ -76,6 +77,7 @@ public class User implements Serializable {
     public void setSalt(String salt) {
         this.salt = salt;
     }
+    */
 
     public byte getState() {
         return state;
@@ -93,12 +95,15 @@ public class User implements Serializable {
         this.roleList = roleList;
     }
 
+
     /**
      * 加密密码
      */
+    /*
     public String getCredentialsSalt() {
         return this.username + this.salt;
     }
+    */
 
     @Override
     public String toString() {
@@ -107,7 +112,7 @@ public class User implements Serializable {
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", salt='" + salt + '\'' +
+               // ", salt='" + salt + '\'' +
                 ", state=" + state +
                 ", roleList=" + roleList +
                 '}';

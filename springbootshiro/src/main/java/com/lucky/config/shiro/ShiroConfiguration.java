@@ -1,5 +1,7 @@
 package com.lucky.config.shiro;
 
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -60,6 +62,50 @@ public class ShiroConfiguration {
     @Bean
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+
+        // 设置Realm
+        securityManager.setRealm(myShiroRealm());
+
         return securityManager;
+    }
+
+    /**
+     * 凭证匹配器
+     * （由于密码校验交给Shiro的SimpleAuthenticationInfo处理，因此需要修改doGetAuthenticationInfo中的代码）
+     * @return
+     */
+    @Bean
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        hashedCredentialsMatcher.setHashAlgorithmName("md5");  // 使用md5算法
+        hashedCredentialsMatcher.setHashIterations(2);    // 散列的次数，比如散列2次，相当于md5(md5())
+        return hashedCredentialsMatcher;
+    }
+
+    /**
+     * 身份认证realm
+     *（需手动实现，账号密码校验；权限等）
+     * @return
+     */
+    @Bean
+    public MyShiroRealm myShiroRealm() {
+        MyShiroRealm myShiroRealm = new MyShiroRealm();
+        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        return myShiroRealm;
+    }
+
+
+
+    /**
+     * 开启shiro aop注解支持
+     * 使用代理方式，需要开启代码支持
+     * @param securityManager
+     * @return
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
     }
 }
